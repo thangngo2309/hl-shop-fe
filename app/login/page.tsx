@@ -1,122 +1,94 @@
 'use client';
 
-import { useState } from 'react';
-import { login, refresh } from '@/lib/auth';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { login } from '@/lib/auth';
 import { isTokenExpired } from '@/lib/token';
 
+type LoginForm = {
+  username: string;
+  password: string;
+};
+
 export default function LoginPage() {
-  const [username, setUsername] = useState(''); // Thêm state cho username
-  const [password, setPassword] = useState(''); // Thêm state cho password
-  const [loading, setLoading] = useState(false); // Thêm state cho loading
-  const [error, setError] = useState('');  // Thêm state cho error
-  const [success, setSuccess] = useState(false);  // Thêm state cho success
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting, isSubmitSuccessful },
+  } = useForm<LoginForm>();
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess(false);
+  const onSubmit = async (data: LoginForm) => {
+    try {
+      const res = await login(data.username, data.password);
+      localStorage.setItem('access_token', res.access_token);
+      localStorage.setItem('refresh_token', res.refresh_token);
 
-    try {    
-      const data = await login(username, password);
-      localStorage.setItem('access_token', data.access_token);
-      localStorage.setItem('refresh_token', data.refresh_token);
+      // console.log('Access token expired:', isTokenExpired(res.access_token));
+      // console.log('Refresh token expired:', isTokenExpired(res.refresh_token));
 
-      console.log('Access token expired:', isTokenExpired(data.access_token));
-      console.log('Refresh token expired:', isTokenExpired(data.refresh_token));
-
-      console.log(data);
-      setSuccess(true);
-
+      router.push('/profile');
     } catch {
-      setError('Sai username hoặc password');
-    } finally {
-      setLoading(false);
+      setError('root', { message: 'Sai username hoặc password' });
     }
   };
 
   return (
-    <div style={styles.container}>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <h2 style={styles.title}>Đăng nhập</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="w-full max-w-sm bg-white rounded-2xl shadow-md p-8">
+        <h1 className="text-2xl font-semibold text-gray-900 text-center mb-6">
+          Đăng nhập
+        </h1>
 
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={styles.input}
-          required
-        />
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Username</label>
+            <input
+              {...register('username', {
+                required: 'Username không được để trống',
+                minLength: { value: 3, message: 'Username tối thiểu 3 ký tự' },
+              })}
+              placeholder="Nhập username"
+              className="px-3 py-2 rounded-lg border border-gray-300 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            />
+            {errors.username && (
+              <p className="text-red-500 text-xs">{errors.username.message}</p>
+            )}
+          </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={styles.input}
-          required
-        />
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Password</label>
+            <input
+              {...register('password', {
+                required: 'Password không được để trống',
+                minLength: { value: 6, message: 'Password tối thiểu 6 ký tự' },
+              })}
+              type="password"
+              placeholder="Nhập password"
+              className="px-3 py-2 rounded-lg border border-gray-300 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            />
+            {errors.password && (
+              <p className="text-red-500 text-xs">{errors.password.message}</p>
+            )}
+          </div>
 
-        {success && <p style={styles.success}>Đăng nhập thành công!</p>}
-        {error && <p style={styles.error}>{error}</p>}
+          {isSubmitSuccessful && (
+            <p className="text-green-600 text-sm text-center">Đăng nhập thành công!</p>
+          )}
+          {errors.root && (
+            <p className="text-red-500 text-sm text-center">{errors.root.message}</p>
+          )}
 
-        <button type="submit" disabled={loading} style={styles.button}>
-          {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="mt-2 py-2.5 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          >
+            {isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const styles: any = {
-  container: {
-    height: '100vh',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    background: '#e5e7eb',
-  },
-  form: {
-    width: '320px',
-    padding: '24px',
-    borderRadius: '10px',
-    background: '#ffffff',
-    boxShadow: '0 6px 16px rgba(0,0,0,0.15)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '14px',
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: '10px',
-    color: '#111827',
-  },
-  input: {
-    padding: '10px',
-    borderRadius: '6px',
-    border: '1px solid #9ca3af',
-    color: '#111827',
-    outline: 'none',
-  },
-  button: {
-    padding: '10px',
-    borderRadius: '6px',
-    border: 'none',
-    background: '#1d4ed8',
-    color: '#ffffff',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-  },
-  success: {
-    color: '#16a34a',
-    fontSize: '14px',
-    textAlign: 'center',
-  },
-  error: {
-    color: '#dc2626',
-    fontSize: '14px',
-    textAlign: 'center',
-  },
-};
