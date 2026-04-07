@@ -1,38 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getProfile } from '@/lib/auth';
+import { Button } from '@/component/button.component';
+import { useUserStore } from '@/store/useUser.store';
 
-interface Profile {
-  sub: number;
-  username: string;
-  name?: string;
-  iat: number;
-  exp: number;
-}
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { profile, setProfile, clearProfile } = useUserStore();
   const [error, setError] = useState('');
 
-  const handleGetProfile = async () => {
-    setLoading(true);
+  // CallBack để tránh việc tạo lại hàm handleGetProfile mỗi khi component re-render
+  const handleGetProfile = useCallback(async () => {
     setError('');
     try {
-      const data = await getProfile();
-      setProfile(data);
+      const res = await getProfile();
+      setProfile(res);
     } catch {
       setError('Không thể lấy thông tin profile');
       router.push('/login');
     } finally {
-      setLoading(false);
     }
-  };
+  }, [router, setProfile]);
+
+  // Khi load component, sẽ gọi handleGetProfile để lấy thông tin profile của user
+  useEffect(() => {
+    handleGetProfile();
+  }, [handleGetProfile]);
 
   const handleLogout = () => {
+    clearProfile();
     localStorage.clear();
     router.push('/login');
   };
@@ -46,7 +45,7 @@ export default function ProfilePage() {
           <div className="flex flex-col gap-3">
             <div className="flex justify-between border-b border-gray-100 pb-2">
               <span className="text-gray-500 text-sm">ID</span>
-              <span className="text-gray-900 text-sm font-medium">{profile.sub}</span>
+              <span className="text-gray-900 text-sm font-medium">{profile.user_id}</span>
             </div>
             <div className="flex justify-between border-b border-gray-100 pb-2">
               <span className="text-gray-500 text-sm">Username</span>
@@ -56,11 +55,9 @@ export default function ProfilePage() {
               <span className="text-gray-500 text-sm">Name</span>
               <span className="text-gray-900 text-sm font-medium">{profile.name}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500 text-sm">Token hết hạn</span>
-              <span className="text-gray-900 text-sm font-medium">
-                {new Date(profile.exp * 1000).toLocaleTimeString()}
-              </span>
+            <div className="flex justify-between border-b border-gray-100 pb-2">
+              <span className="text-gray-500 text-sm">Role</span>
+              <span className="text-gray-900 text-sm font-medium">{profile.role}</span>
             </div>
           </div>
         )}
@@ -69,20 +66,10 @@ export default function ProfilePage() {
           <p className="text-red-600 text-sm text-center">{error}</p>
         )}
 
-        <button
-          onClick={handleGetProfile}
-          disabled={loading}
-          className="py-2.5 rounded-md border-none bg-blue-700 text-white font-bold cursor-pointer hover:bg-blue-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-        >
-          {loading ? 'Đang tải...' : 'Get Profile'}
-        </button>
-
-        <button
-          onClick={handleLogout}
-          className="py-2.5 rounded-md border-none bg-red-600 text-white font-bold cursor-pointer hover:bg-red-700 transition-colors"
-        >
+        <Button type="button" variant="danger" onClick={handleLogout}>
           Đăng xuất
-        </button>
+        </Button>
+
       </div>
     </div>
   );

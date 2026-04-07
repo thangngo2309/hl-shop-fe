@@ -76,7 +76,12 @@ export async function logout(): Promise<void> {
   await api.post('/auth/logout');
 }
 
-export async function getProfile(): Promise<{ sub: number; username: string; iat: number; exp: number }> {
+export async function getProfile(): Promise<{ 
+  user_id: number;
+  username: string;
+  name: string | null;
+  role: string;
+}>{
   const res = await api.get('/auth/profile');
   return res.data;
 }

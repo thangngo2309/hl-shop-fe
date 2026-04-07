@@ -3,7 +3,8 @@
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { login } from '@/lib/auth';
-import { isTokenExpired } from '@/lib/token';
+import { Input } from '@/component/input.component';
+import { Button } from '@/component/button.component';
 
 type LoginForm = {
   username: string;
@@ -42,36 +43,28 @@ export default function LoginPage() {
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">Username</label>
-            <input
-              {...register('username', {
-                required: 'Username không được để trống',
-                minLength: { value: 3, message: 'Username tối thiểu 3 ký tự' },
-              })}
-              placeholder="Nhập username"
-              className="px-3 py-2 rounded-lg border border-gray-300 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-            />
-            {errors.username && (
-              <p className="text-red-500 text-xs">{errors.username.message}</p>
-            )}
-          </div>
+          <Input
+            label="Username"
+            placeholder="Nhập username"
+            required
+            error={errors.username}
+            {...register('username', {
+              required: 'Username không được để trống',
+              minLength: { value: 3, message: 'Username tối thiểu 3 ký tự' },
+            })}
+          />
 
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">Password</label>
-            <input
-              {...register('password', {
-                required: 'Password không được để trống',
-                minLength: { value: 6, message: 'Password tối thiểu 6 ký tự' },
-              })}
-              type="password"
-              placeholder="Nhập password"
-              className="px-3 py-2 rounded-lg border border-gray-300 text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-            />
-            {errors.password && (
-              <p className="text-red-500 text-xs">{errors.password.message}</p>
-            )}
-          </div>
+          <Input
+            label="Password"
+            type="password"
+            placeholder="Nhập password"
+            required
+            error={errors.password}
+            {...register('password', {
+              required: 'Password không được để trống',
+              minLength: { value: 6, message: 'Password tối thiểu 6 ký tự' },
+            })}
+          />         
 
           {isSubmitSuccessful && (
             <p className="text-green-600 text-sm text-center">Đăng nhập thành công!</p>
@@ -80,13 +73,8 @@ export default function LoginPage() {
             <p className="text-red-500 text-sm text-center">{errors.root.message}</p>
           )}
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="mt-2 py-2.5 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-          >
-            {isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
-          </button>
+          <Button type="submit" variant="primary" disabled={isSubmitting}>Đăng nhập </Button>
+          
         </form>
       </div>
     </div>
