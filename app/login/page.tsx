@@ -25,11 +25,8 @@ export default function LoginPage() {
       const res = await login(data.username, data.password);
       localStorage.setItem('access_token', res.access_token);
       localStorage.setItem('refresh_token', res.refresh_token);
+      router.push('/dashboard');
 
-      // console.log('Access token expired:', isTokenExpired(res.access_token));
-      // console.log('Refresh token expired:', isTokenExpired(res.refresh_token));
-
-      router.push('/profile');
     } catch {
       setError('root', { message: 'Sai username hoặc password' });
     }

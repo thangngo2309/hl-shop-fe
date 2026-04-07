@@ -7,7 +7,7 @@ import { Button } from '@/component/button.component';
 import { useUserStore } from '@/store/useUser.store';
 
 
-export default function ProfilePage() {
+export default function DashboardPage() {
   const router = useRouter();
   const { profile, setProfile, clearProfile } = useUserStore();
   const [error, setError] = useState('');
@@ -31,8 +31,8 @@ export default function ProfilePage() {
       return;
     }
     // Khi có profile, check role
-    if (profile.role !== 'user') {
-      router.push('/admin/dashboard');
+    if (profile.role !== 'admin') {
+      router.push('/profile');
     }
   }, []);
 
@@ -45,7 +45,7 @@ export default function ProfilePage() {
   return (
     <div className="h-screen flex justify-center items-center bg-gray-200">
       <div className="w-80 p-6 rounded-xl bg-white shadow-lg flex flex-col gap-4">
-        <h2 className="text-center text-gray-900 font-semibold text-xl">Profile</h2>
+        <h2 className="text-center text-gray-900 font-semibold text-xl">Dashboard</h2>
 
         {profile && (
           <div className="flex flex-col gap-3">
