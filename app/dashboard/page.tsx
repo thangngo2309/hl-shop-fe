@@ -34,7 +34,8 @@ export default function DashboardPage() {
     if (profile.role !== 'admin') {
       router.push('/profile');
     }
-  }, []);
+  // }, []);
+  }, [profile, handleGetProfile, router]);
 
   const handleLogout = () => {
     clearProfile();

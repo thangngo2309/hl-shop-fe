@@ -1,10 +1,12 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { login } from '@/lib/auth';
 import { Input } from '@/component/input.component';
 import { Button } from '@/component/button.component';
+import { Form } from '@/component/form.component';
+import { useEffect } from 'react';
 
 type LoginForm = {
   username: string;
@@ -13,22 +15,30 @@ type LoginForm = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
-  } = useForm<LoginForm>();
+  const methods = useForm<LoginForm>(
+    {
+      mode: 'onBlur',
+    }
+  );
 
-  const onSubmit = async (data: LoginForm) => {
+  const username = methods.watch("username");
+  const password = methods.watch("password");
+
+  useEffect(() => {
+    if (methods.formState.errors.root) {
+      methods.clearErrors('root');
+    }
+  }, [username, password]);
+
+  const onSubmit: SubmitHandler<LoginForm> = async (data) => {
     try {
       const res = await login(data.username, data.password);
       localStorage.setItem('access_token', res.access_token);
       localStorage.setItem('refresh_token', res.refresh_token);
       router.push('/dashboard');
-
-    } catch {
-      setError('root', { message: 'Sai username hoặc password' });
+    } catch (error) {
+      console.error(error);
+      methods.setError('root', { type: 'server', message: 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.' });
     }
   };
 
@@ -39,40 +49,40 @@ export default function LoginPage() {
           Đăng nhập
         </h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Form<LoginForm> onSubmit={onSubmit} methods={methods}>
           <Input
+            name="username"
             label="Username"
             placeholder="Nhập username"
-            required
-            error={errors.username}
-            {...register('username', {
-              required: 'Username không được để trống',
-              minLength: { value: 3, message: 'Username tối thiểu 3 ký tự' },
-            })}
+            rules={{
+              required: 'Vui lòng nhập username',
+              minLength: {
+                value: 3,
+                message: 'Username phải có ít nhất 3 ký tự'
+              }
+            }}
           />
 
           <Input
+            name="password"
             label="Password"
             type="password"
             placeholder="Nhập password"
-            required
-            error={errors.password}
-            {...register('password', {
-              required: 'Password không được để trống',
-              minLength: { value: 6, message: 'Password tối thiểu 6 ký tự' },
-            })}
-          />         
+            rules={{ required: 'Vui lòng nhập password',
+              minLength: {
+                value: 6,
+                message: 'Password phải có ít nhất 6 ký tự'
+              }
+            }}
+          />
 
-          {isSubmitSuccessful && (
-            <p className="text-green-600 text-sm text-center">Đăng nhập thành công!</p>
+          {methods.formState.errors.root?.message && (
+            <p className="text-red-500 text-sm mt-2">
+              {methods.formState.errors.root.message}
+            </p>
           )}
-          {errors.root && (
-            <p className="text-red-500 text-sm text-center">{errors.root.message}</p>
-          )}
-
-          <Button type="submit" variant="primary" disabled={isSubmitting}>Đăng nhập </Button>
-          
-        </form>
+          <Button type="submit" variant="primary" >Đăng nhập </Button>
+        </Form>
       </div>
     </div>
   );

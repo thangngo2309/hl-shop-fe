@@ -20,43 +20,32 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const original = error.config;
+    const isLoginPage = window.location.pathname === '/login';
 
-    //
     if (error.response?.status === 401 && !original._retry) {
-      // Đánh dấu đã retry để không lặp nữa
       original._retry = true;
 
-      // Lấy refresh token từ localStorage
       const refresh_token = localStorage.getItem('refresh_token');
-      if (!refresh_token) {
-        // Nếu không có refresh token, logout và chuyển về trang login
-        window.location.href = '/login';
-        return Promise.reject(error);
-      }
 
-      // Nếu refresh token đã hết hạn, logout và chuyển về trang login
-      if (isTokenExpired(refresh_token)) {
-        window.location.href = '/login';
+      if (!refresh_token || isTokenExpired(refresh_token)) {
+        if (!isLoginPage) window.location.href = '/login';
         return Promise.reject(error);
       }
       
       try {
-        // Gọi API refresh token
         const { data } = await api.post<{ access_token: string }>('/auth/refresh', { refresh_token });
         localStorage.setItem('access_token', data.access_token);
-        // Cập nhật header Authorization và retry request gốc
         original.headers.Authorization = `Bearer ${data.access_token}`;
         return api(original);
       } catch {
         localStorage.clear();
-        window.location.href = '/login';
+        if (!isLoginPage) window.location.href = '/login';
       }
     }
 
     return Promise.reject(error);
   }
 );
-
 
 export interface AuthResponse {
   access_token: string;
