@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -6,7 +7,7 @@ import { login } from '@/lib/auth';
 import { Input } from '@/component/input.component';
 import { Button } from '@/component/button.component';
 import { Form } from '@/component/form.component';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 type LoginForm = {
   username: string;
@@ -15,9 +16,16 @@ type LoginForm = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null)
+
   const methods = useForm<LoginForm>(
     {
-      mode: 'onBlur',
+      mode: 'onTouched',
+      reValidateMode: 'onChange',
+      defaultValues: {
+        username: '',
+        password: ''
+      }
     }
   );
 
@@ -25,8 +33,8 @@ export default function LoginPage() {
   const password = methods.watch("password");
 
   useEffect(() => {
-    if (methods.formState.errors.root) {
-      methods.clearErrors('root');
+    if (error) {
+      setError(null);
     }
   }, [username, password]);
 
@@ -38,7 +46,7 @@ export default function LoginPage() {
       router.push('/dashboard');
     } catch (error) {
       console.error(error);
-      methods.setError('root', { type: 'server', message: 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.' });
+      setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
     }
   };
 
@@ -49,7 +57,7 @@ export default function LoginPage() {
           Đăng nhập
         </h1>
 
-        <Form<LoginForm> onSubmit={onSubmit} methods={methods}>
+        <Form<LoginForm> onSubmit={onSubmit} methods={methods} error={error}>
           <Input
             name="username"
             label="Username"
@@ -68,7 +76,8 @@ export default function LoginPage() {
             label="Password"
             type="password"
             placeholder="Nhập password"
-            rules={{ required: 'Vui lòng nhập password',
+            rules={{
+              required: 'Vui lòng nhập password',
               minLength: {
                 value: 6,
                 message: 'Password phải có ít nhất 6 ký tự'
@@ -76,12 +85,8 @@ export default function LoginPage() {
             }}
           />
 
-          {methods.formState.errors.root?.message && (
-            <p className="text-red-500 text-sm mt-2">
-              {methods.formState.errors.root.message}
-            </p>
-          )}
-          <Button type="submit" variant="primary" >Đăng nhập </Button>
+          <Button type="submit" variant="primary" >Đăng nhập</Button>
+
         </Form>
       </div>
     </div>
