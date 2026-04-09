@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -8,6 +9,7 @@ import { Button } from '@/component/button.component';
 import { Form } from '@/component/form.component'; 
 import { setAuthTokens } from '@/lib/localstorage';
 import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
 
 type LoginForm = {
   username: string;
@@ -16,12 +18,19 @@ type LoginForm = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null)
+
   const methods = useForm<LoginForm>(
     {
-      mode: 'onBlur',
+      mode: 'onTouched',
+      reValidateMode: 'onChange',
+      defaultValues: {
+        username: '',
+        password: ''
+      }
     }
   );
-
+  
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
     try {
       const res = await login(data.username, data.password);
@@ -41,7 +50,7 @@ export default function LoginPage() {
           Đăng nhập
         </h1>
 
-        <Form<LoginForm> onSubmit={onSubmit} methods={methods}>
+        <Form<LoginForm> onSubmit={onSubmit} methods={methods} error={error}>
           <Input
             name="username"
             label="Username"
@@ -60,7 +69,8 @@ export default function LoginPage() {
             label="Password"
             type="password"
             placeholder="Nhập password"
-            rules={{ required: 'Vui lòng nhập password',
+            rules={{
+              required: 'Vui lòng nhập password',
               minLength: {
                 value: 6,
                 message: 'Password phải có ít nhất 6 ký tự'

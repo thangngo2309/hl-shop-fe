@@ -1,19 +1,11 @@
 import { useFormContext } from 'react-hook-form';
-
-interface InputProps{
-  name: string;
-  label?: string;
-  type?: string;
-  placeholder?: string;
-  inputClassName?: string;
-  rules?: object;
-}
+import { InputProps } from '@/model/input.model';
 
 export function Input({ name, label, type, placeholder, inputClassName, rules }: InputProps) {
   const defaultInputClassName = "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder:text-gray-400";
   const { register, formState: { errors } } = useFormContext();
   const fieldError = errors[name];
-  // console.log(errors[name]);
+
   return (
     <div className="flex flex-col gap-1 mb-4">
       {label && (
@@ -22,11 +14,12 @@ export function Input({ name, label, type, placeholder, inputClassName, rules }:
         </label>
       )}
 
-      <input 
-      {...register(name, rules)} 
-      className={`${defaultInputClassName} ${inputClassName || ''} ${fieldError ? 'border-red-500' : ''}`}
-      type={type} 
-      placeholder={placeholder}
+      <input
+        {...register(name, rules)}
+        className={`${defaultInputClassName} ${inputClassName || ''} 
+        ${fieldError ? 'border-red-500' : ''}`}
+        type={type}
+        placeholder={placeholder}
       />
 
       {fieldError && (
