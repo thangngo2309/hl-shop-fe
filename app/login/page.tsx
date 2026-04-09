@@ -6,7 +6,9 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { login } from '@/lib/auth';
 import { Input } from '@/component/input.component';
 import { Button } from '@/component/button.component';
-import { Form } from '@/component/form.component';
+import { Form } from '@/component/form.component'; 
+import { setAuthTokens } from '@/lib/localstorage';
+import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
 
 type LoginForm = {
@@ -28,25 +30,16 @@ export default function LoginPage() {
       }
     }
   );
-
-  const username = methods.watch("username");
-  const password = methods.watch("password");
-
-  useEffect(() => {
-    if (error) {
-      setError(null);
-    }
-  }, [username, password]);
-
+  
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
     try {
       const res = await login(data.username, data.password);
-      localStorage.setItem('access_token', res.access_token);
-      localStorage.setItem('refresh_token', res.refresh_token);
+      setAuthTokens(res.access_token, res.refresh_token);
+      toast.success('Đăng nhập thành công!');
       router.push('/dashboard');
     } catch (error) {
       console.error(error);
-      setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+      toast.error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
     }
   };
 
@@ -85,8 +78,7 @@ export default function LoginPage() {
             }}
           />
 
-          <Button type="submit" variant="primary" >Đăng nhập</Button>
-
+          <Button type="submit" variant="primary" >Đăng nhập </Button>
         </Form>
       </div>
     </div>
