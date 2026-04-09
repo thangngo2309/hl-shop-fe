@@ -1,17 +1,16 @@
-import {useForm, FormProvider, SubmitHandler, FieldValues} from 'react-hook-form';
+import { FormProvider, FieldValues} from 'react-hook-form';
+import { FormProps } from '@/model/form.model';
 
-interface FormProps<T extends FieldValues> {
-  children: React.ReactNode;
-  onSubmit: SubmitHandler<T>;
-  methods: ReturnType<typeof useForm<T>>;
-}
-
-export function Form<T extends FieldValues>({ children, onSubmit, methods }: FormProps<T>)  {
-
+export function Form<T extends FieldValues>({ children, onSubmit, methods, error }: FormProps<T>)  {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         {children}
+        {error && (
+          <p className="text-red-500 text-sm mt-2">
+            {error}
+          </p>
+        )}
       </form>
     </FormProvider>
   );
