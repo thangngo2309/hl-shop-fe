@@ -1,5 +1,11 @@
 import axios from 'axios';
 import { isTokenExpired } from './token';
+import { 
+  clearAuthTokens, 
+  getAccessToken, 
+  getRefreshToken, 
+  setAuthTokens 
+} from './localstorage';
 
 const api = axios.create({
   baseURL: 'http://localhost:3000',
@@ -8,7 +14,7 @@ const api = axios.create({
 
 // Gắn token vào header mỗi request
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
+  const token = getAccessToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -25,7 +31,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !original._retry) {
       original._retry = true;
 
-      const refresh_token = localStorage.getItem('refresh_token');
+      const refresh_token = getRefreshToken();
 
       if (!refresh_token || isTokenExpired(refresh_token)) {
         if (!isLoginPage) window.location.href = '/login';
@@ -34,11 +40,11 @@ api.interceptors.response.use(
       
       try {
         const { data } = await api.post<{ access_token: string }>('/auth/refresh', { refresh_token });
-        localStorage.setItem('access_token', data.access_token);
+        setAuthTokens(data.access_token, refresh_token);
         original.headers.Authorization = `Bearer ${data.access_token}`;
         return api(original);
       } catch {
-        localStorage.clear();
+        clearAuthTokens();
         if (!isLoginPage) window.location.href = '/login';
       }
     }
@@ -63,6 +69,7 @@ export async function refresh(refresh_token: string): Promise<{ access_token: st
 
 export async function logout(): Promise<void> {
   await api.post('/auth/logout');
+  clearAuthTokens();
 }
 
 export async function getProfile(): Promise<{ 
