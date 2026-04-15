@@ -8,20 +8,20 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Header />
+    <div className="h-screen flex flex-col bg-gray-50"> 
+      <Header />
 
-        <div className="flex flex-1">
-          <aside className="md:w-65 md:shrink-0">
-            <Sidebar />
-          </aside>
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        <aside className="overflow-y-auto md:w-65 md:shrink-0 bg-white border-r">
+          <Sidebar />
+        </aside>
 
-          <main className="min-w-0 flex-1 overflow-hidden bg-white px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-6">
-            {children}
-          </main>
-        </div>
-
-        <Footer />
+        <main className="overflow-y-auto flex-1 min-w-0 bg-white px-3 py-3 sm:px-4 sm:py-4 md:px-6 md:py-6">
+          {children}
+        </main>
       </div>
+
+      <Footer />
+    </div>
   );
 }

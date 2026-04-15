@@ -24,7 +24,7 @@ const Sidebar: React.FC = () => {
     isMobile: boolean
   ) => {
     return (
-      <ul className="mt-1 flex flex-col gap-0.5">
+      <ul className="mt-1 flex flex-col gap-0.5 ">
         {children.map((child) => {
           const childKey = `${parentKey}-${child.label}`;
           const childOpen = !!openMenus[childKey];
