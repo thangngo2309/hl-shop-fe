@@ -79,10 +79,7 @@ const Sidebar: React.FC = () => {
 
   const NavContent = ({ isMobile }: { isMobile: boolean }) => (
     <>
-      <div className="flex h-16 items-center border-b border-gray-200/60 px-4">
-        <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-          Menu
-        </span>
+      <div className="flex items-center border-b border-gray-200/60 px-4">
         {isMobile && (
           <button
             type="button"
