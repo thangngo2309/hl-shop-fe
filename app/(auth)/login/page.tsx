@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -9,7 +8,7 @@ import { Button } from '@/component/button.component';
 import { Form } from '@/component/form.component'; 
 import { setAuthTokens } from '@/lib/localstorage';
 import { toast } from 'react-toastify';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type LoginForm = {
   username: string;
@@ -18,7 +17,7 @@ type LoginForm = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null)
+  const [error] = useState<string | null>(null)
 
   const methods = useForm<LoginForm>(
     {

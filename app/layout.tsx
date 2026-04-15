@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import ToastProvider from "@/component/toastprovider.component";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const roboto = Roboto({
+  weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-roboto",
 });
 
 export const metadata: Metadata = {
@@ -25,13 +22,12 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="en" className={roboto.variable}
     >
-      <body className="min-h-full flex flex-col">
-        <ToastProvider>
-          {children}
-        </ToastProvider>
+      <body className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
+              <ToastProvider>
+                <main className="flex-1 grow">{children}</main>
+              </ToastProvider>
       </body>
     </html>
   );
