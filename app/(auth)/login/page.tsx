@@ -31,16 +31,11 @@ export default function LoginPage() {
   );
   
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
-    try {
       const res = await login(data.username, data.password);
       setAuthTokens(res.access_token, res.refresh_token);
       toast.success('Đăng nhập thành công!');
       router.push('/dashboard');
-    } catch (error) {
-      console.error(error);
-      toast.error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
     }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

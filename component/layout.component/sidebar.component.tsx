@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, X } from "lucide-react";
-import { menuItems } from "@/lib/menu.data";
+import { menuItems } from "@/constants/menu.data";
 import type { MenuItem } from "@/model/menu.model";
 
 const Sidebar: React.FC = () => {
