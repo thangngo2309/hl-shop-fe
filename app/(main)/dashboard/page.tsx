@@ -1,51 +1,26 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { Button } from '@/component/button.component';
-import { useUserStore } from '@/store/useUser.store';
-import { clearAuthTokens } from '@/lib/localstorage';
+import { Button } from '@/components/ui/button';
+import Link from "next/link";
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const { profile, clearProfile } = useUserStore();
-
-  const handleLogout = () => {
-    router.push('/');
-    clearProfile();
-    clearAuthTokens();
-  };
-
   return (
-    <div className="h-screen flex justify-center items-center bg-gray-200">
-      <div className="w-80 p-6 rounded-xl bg-white shadow-lg flex flex-col gap-4">
-        <h2 className="text-center text-gray-900 font-semibold text-xl">Dashboard</h2>
+    <div
+      className="flex h-full min-h-80 flex-col items-center justify-center bg-cover bg-center bg-no-repeat px-4 py-10 text-center sm:min-h-105 sm:px-6"
+      style={{ backgroundImage: "url('/images/bg.jpg')" }}
+    >
 
-        (
-        <div className="flex flex-col gap-3">
-          <div className="flex justify-between border-b border-gray-100 pb-2">
-            <span className="text-gray-500 text-sm">ID</span>
-            <span className="text-gray-900 text-sm font-medium">{profile?.user_id}</span>
-          </div>
-          <div className="flex justify-between border-b border-gray-100 pb-2">
-            <span className="text-gray-500 text-sm">Username</span>
-            <span className="text-gray-900 text-sm font-medium">{profile?.username}</span>
-          </div>
-          <div className="flex justify-between border-b border-gray-100 pb-2">
-            <span className="text-gray-500 text-sm">Name</span>
-            <span className="text-gray-900 text-sm font-medium">{profile?.name}</span>
-          </div>
-          <div className="flex justify-between border-b border-gray-100 pb-2">
-            <span className="text-gray-500 text-sm">Role</span>
-            <span className="text-gray-900 text-sm font-medium">{profile?.role}</span>
-          </div>
-        </div>
-        )
+      <h1 className="mb-6 text-2xl font-bold text-white drop-shadow-sm sm:text-3xl md:text-4xl">
+        Chào mừng đến với HL Shop!
+      </h1>
 
-        <Button type="button" variant="danger" onClick={handleLogout}>
-          Đăng xuất
-        </Button>
-
-      </div>
+      <Link href="/product">
+        <Button         
+            type="submit" 
+            variant="outline"
+            size="default"
+            className="w-full mt-4" >Xem sản phẩm</Button>
+      </Link>
     </div>
   );
 }

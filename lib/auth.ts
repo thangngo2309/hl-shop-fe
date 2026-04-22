@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { isTokenExpired } from './token';
-import {
-  clearAuthTokens,
-  getAccessToken,
-  getRefreshToken,
-  setAuthTokens
+import { ProductResponse } from '@/model/productresponse.model';
+
+import { 
+  clearAuthTokens, 
+  getAccessToken, 
+  getRefreshToken, 
+  setAuthTokens 
 } from './localstorage';
 import { toast } from 'react-toastify';
 import { API_ERROR_MESSAGES } from '@/constants/api-error-message';
@@ -144,5 +146,20 @@ export async function getProfile(): Promise<{
   role: string;
 }> {
   const res = await api.get('/auth/profile');
+  return res.data;
+}
+
+export async function getProducts(
+searchName?: string, page = 1, limit = 10, minPrice?: number, maxPrice?: number, orderBy?: string): Promise<ProductResponse> {
+  const res = await api.get<ProductResponse>('/products', {
+    params: {
+      searchName: searchName || undefined,
+      page,
+      limit,
+      minPrice: minPrice !== undefined ? minPrice : undefined,
+      maxPrice: maxPrice !== undefined ? maxPrice : undefined,
+      orderBy: orderBy || 'ASC',
+    }
+  });
   return res.data;
 }

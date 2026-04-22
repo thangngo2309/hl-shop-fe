@@ -1,39 +1,28 @@
-import { MenuItem } from '@/model/menu.model';
-
-export const menuItems: MenuItem[] = [
-    {
-        label: 'Danh mục',
-        children: [
-            {
-                label: 'Danh mục 1',
-                children: [
-                    {
-                        label: 'Danh mục con 1',
-                        href: '/#',
-                    },
-                    {   
-                        label: 'Danh mục con 2',
-                        href: '/#',
-                    },
-                ],
-            },
-            {
-                label: 'Danh mục 2',
-                children: [
-                    {
-                        label: 'Danh mục con 3',
-                        href: '/#',
-                    },
-                    {
-                        label: 'Danh mục con 4',
-                        href: '/#',
-                    },
-                    {
-                        label: 'Danh mục con 5',
-                        href: '/#',
-                    }
-                ],
-            },
-        ],
-    },
+export const menuItems = [
+  {
+    label: 'Hãng',
+    children: [
+      { label: 'iPhone', searchName: 'iPhone' },
+      { label: 'Samsung', searchName: 'Samsung' },
+      { label: 'Xiaomi', searchName: 'Xiaomi' },
+      { label: 'OPPO', searchName: 'OPPO' },
+      { label: 'Toàn bộ các hãng', searchName: '' },
+    ],
+  },
+  {
+    label: 'Khoảng giá',
+    children: [
+      { label: 'Dưới 10 triệu', minPrice: undefined, maxPrice: 10000000 },
+      { label: '10 - 20 triệu', minPrice: 10000000, maxPrice: 20000000 },
+      { label: 'Trên 20 triệu', minPrice: 20000000, maxPrice: undefined },
+      { label: 'Tất cả', minPrice: undefined, maxPrice: undefined },
+    ],
+  },
+  {
+    label: 'Sắp xếp theo',
+    children: [
+      { label: 'Giá thấp đến cao', orderBy: 'ASC' },
+      { label: 'Giá cao đến thấp', orderBy: 'DESC' },
+    ],
+  }
 ];
