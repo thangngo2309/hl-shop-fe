@@ -1,3 +1,6 @@
+import { Button } from '@/components/ui/button';
+import Link from "next/link";
+
 export default function HomePage() {
   return (
     <div
@@ -8,6 +11,14 @@ export default function HomePage() {
       <h1 className="mb-6 text-2xl font-bold text-white drop-shadow-sm sm:text-3xl md:text-4xl">
         Chào mừng đến với HL Shop!
       </h1>
+
+      <Link href="/product">
+        <Button         
+            type="submit" 
+            variant="outline"
+            size="default"
+            className="w-full mt-4" >Xem sản phẩm</Button>
+      </Link>
     </div>
   );
 }

@@ -1,5 +1,8 @@
 export interface MenuItem {
   label: string;
-  href?: string;
+  searchName?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  orderBy?: string;
   children?: MenuItem[];
 }

@@ -3,12 +3,12 @@
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { login } from '@/lib/auth';
-import { Input } from '@/component/input.component';
-import { Button } from '@/component/button.component';
+import { Input } from '@/components/ui/input';
 import { Form } from '@/component/form.component'; 
 import { setAuthTokens } from '@/lib/localstorage';
 import { toast } from 'react-toastify';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 type LoginForm = {
   username: string;
@@ -72,7 +72,13 @@ export default function LoginPage() {
             }}
           />
 
-          <Button type="submit" variant="primary" >Đăng nhập </Button>
+          <Button             
+            type="submit" 
+            variant="default"
+            size="default"
+            className="w-full mt-4" >
+              Đăng nhập 
+              </Button>
         </Form>
       </div>
     </div>

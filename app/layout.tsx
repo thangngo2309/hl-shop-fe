@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import ToastProvider from "@/component/toastprovider.component";
+import { cn } from "@/lib/utils";
 
-const roboto = Roboto({
-  weight: ["300", "400", "500", "700"],
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-roboto",
-});
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -22,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en" className={roboto.variable}
+      lang="en" className={cn("font-sans", geist.variable)}
     >
       <body className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
               <ToastProvider>
