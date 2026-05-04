@@ -28,11 +28,8 @@ const SidebarContent_: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { setOpenMobile } = useSidebar();
-  
-  // FIX: Nếu không có searchName param, set thành null (không phải "")
-  const currentSearchName = searchParams.has("searchName") 
-    ? searchParams.get("searchName") 
-    : null;
+
+  const currentSearchName = searchParams.get("searchName") ?? ""; 
   const currentMinPrice = searchParams.get("minPrice");
   const currentMaxPrice = searchParams.get("maxPrice");
   const currentOrderBy = searchParams.get("orderBy") || "ASC";
@@ -50,7 +47,7 @@ const SidebarContent_: React.FC = () => {
 
   const isItemActive = (item: MenuItem) => {
     const hasSearchFilter = item.searchName !== undefined;
-    const hasOrderByFilter = item.orderBy !== undefined;
+    const hasOrderByFilter = !!item.orderBy;
     const hasPriceFilter =
       Object.prototype.hasOwnProperty.call(item, "minPrice") ||
       Object.prototype.hasOwnProperty.call(item, "maxPrice");
@@ -62,9 +59,8 @@ const SidebarContent_: React.FC = () => {
     const expectedMin = item.minPrice !== undefined ? String(item.minPrice) : null;
     const expectedMax = item.maxPrice !== undefined ? String(item.maxPrice) : null;
 
-    // FIX: Handle searchName với null/""
     const matchesSearch = hasSearchFilter
-      ? item.searchName === (currentSearchName ?? "")
+      ? item.searchName === (currentSearchName)
       : true;
 
     const matchesOrderBy = hasOrderByFilter
@@ -96,16 +92,20 @@ const SidebarContent_: React.FC = () => {
       params.delete("minPrice");
       params.delete("maxPrice");
 
-      if (item.minPrice !== undefined && item.minPrice !== null) {
+      if (item.minPrice) {
         params.set("minPrice", String(item.minPrice));
+      } else {
+        params.delete("minPrice");
       }
 
-      if (item.maxPrice !== undefined && item.maxPrice !== null) {
+      if (item.maxPrice) {
         params.set("maxPrice", String(item.maxPrice));
+      } else {
+        params.delete("maxPrice");
       }
     }
 
-    if (item.orderBy !== undefined) {
+    if (!!item.orderBy) {
       if (item.orderBy === "DESC") {
         params.set("orderBy", item.orderBy);
       } else {
@@ -114,7 +114,7 @@ const SidebarContent_: React.FC = () => {
     }
 
     params.set("page", "1");
-    return `/product?${params.toString()}`;
+    return `/products?${params.toString()}`;
   };
 
   const handleItemClick = (item: MenuItem) => {

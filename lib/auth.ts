@@ -10,6 +10,7 @@ import {
 } from './localstorage';
 import { toast } from 'react-toastify';
 import { API_ERROR_MESSAGES } from '@/constants/api-error-message';
+import { ProductDetailResponse } from '@/model/productdetailresponse.model';
 
 const api = axios.create({
   baseURL: 'http://localhost:3000',
@@ -153,13 +154,18 @@ export async function getProducts(
 searchName?: string, page = 1, limit = 10, minPrice?: number, maxPrice?: number, orderBy?: string): Promise<ProductResponse> {
   const res = await api.get<ProductResponse>('/products', {
     params: {
-      searchName: searchName || undefined,
+      searchName: searchName ?? "",
       page,
       limit,
-      minPrice: minPrice !== undefined ? minPrice : undefined,
-      maxPrice: maxPrice !== undefined ? maxPrice : undefined,
+      minPrice: minPrice ?? 0,
+      maxPrice: maxPrice ?? Number.MAX_SAFE_INTEGER,
       orderBy: orderBy || 'ASC',
     }
   });
+  return res.data;
+}
+
+export async function getProductDetail(id: number): Promise<ProductDetailResponse> {
+  const res = await api.get<ProductDetailResponse>(`/products/${id}/detail`);
   return res.data;
 }

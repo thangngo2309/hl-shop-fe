@@ -12,7 +12,7 @@ export default function HomePage() {
         Chào mừng đến với HL Shop!
       </h1>
 
-      <Link href="/product">
+      <Link href="/products">
         <Button         
             type="submit" 
             variant="outline"
