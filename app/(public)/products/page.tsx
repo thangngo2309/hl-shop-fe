@@ -85,6 +85,7 @@ return (
                         key={item.product_id}
                         className="hover:shadow-xl transition-all hover:-translate-y-1 group"
                     >
+                        
                         <CardContent className="p-6 flex h-full flex-col">
                             <h2 className="mb-3 text-lg font-semibold text-gray-900 transition-colors group-hover:text-indigo-600">
                                 {item.name}
@@ -102,7 +103,11 @@ return (
                                     </span>
                                 </div>
                             </div>
+                            <button
+                                onClick={() => router.push(`/products/${item.product_id}/detail`)}
+                                className="mt-4 w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">Xem chi tiết</button>     
                         </CardContent>
+                        
                     </Card>
                 ))}
             </div>
