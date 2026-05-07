@@ -21,7 +21,7 @@ export default function UploadImage({ type, entityId, onUploadSuccess }: UploadI
       allowMultipleUploadBatches: false,
     })
     .use(XHRUpload, {
-      endpoint: `http://localhost:3000/images/upload?type=${type}&entity_id=${entityId}`,
+      endpoint: `${process.env.NEXT_PUBLIC_UPLOAD_IMAGE}?type=${type}&entity_id=${entityId}`,
       fieldName: 'files',
       bundle: true,
       headers: {

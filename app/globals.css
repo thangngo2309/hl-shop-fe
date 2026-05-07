@@ -3,6 +3,7 @@
 @import "shadcn/tailwind.css";
 @import '@uppy/core/css/style.min.css';
 @import '@uppy/dashboard/css/style.min.css';
+@import 'ckeditor5/ckeditor5.css';
 
 @custom-variant dark (&:is(.dark *));
 
