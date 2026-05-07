@@ -157,7 +157,7 @@ searchName?: string, page = 1, limit = 10, minPrice?: number, maxPrice?: number,
       searchName: searchName ?? "",
       page,
       limit,
-      minPrice: minPrice ?? 0,
+      minPrice: minPrice ?? 1,
       maxPrice: maxPrice ?? Number.MAX_SAFE_INTEGER,
       orderBy: orderBy || 'ASC',
     }
@@ -168,4 +168,8 @@ searchName?: string, page = 1, limit = 10, minPrice?: number, maxPrice?: number,
 export async function getProductDetail(id: number): Promise<ProductDetailResponse> {
   const res = await api.get<ProductDetailResponse>(`/products/${id}/detail`);
   return res.data;
+}
+
+export async function updateProductInfo(id: number, info: string): Promise<void> {
+  await api.patch(`/products/${id}`, { info: info });
 }
